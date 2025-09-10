@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,9 +44,15 @@ namespace MibMap
 
             var changedProducer = products.Select(p => $"{p.Producer.Substring(0, 3)}...{p.Producer.Substring(p.Producer.Length -1)} {p.ProductName = i18n[p.ProductName]} {p.Quantity * p.PricePerUnit}");
             Console.WriteLine("Seller | Product | CA");
-            changedProducer.ToList().ForEach(name => { Console.WriteLine(name); });
+            //changedProducer.ToList().ForEach(name => { Console.WriteLine(name); });
 
+            string filePath = "MyCSV.csv";
 
+            using (StreamWriter sw = new StreamWriter(filePath))
+            {
+                Console.WriteLine("Seller | Product | CA");
+                changedProducer.ToList().ForEach(name => sw.WriteLine(name));
+            }
 
 
         }
