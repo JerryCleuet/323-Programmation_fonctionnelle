@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.CodeDom.Compiler;
 
 namespace MibMap
 {
@@ -42,7 +44,9 @@ namespace MibMap
                 //...
             };
 
-            var changedProducer = products.Select(p => $"{p.Producer.Substring(0, 3)}...{p.Producer.Substring(p.Producer.Length -1)} {p.ProductName = i18n[p.ProductName]} {p.Quantity * p.PricePerUnit}");
+            //Ex 1
+            /* 
+              var changedProducer = products.Select(p => $"{p.Producer.Substring(0, 3)}...{p.Producer.Substring(p.Producer.Length -1)} {p.ProductName = i18n[p.ProductName]} {p.Quantity * p.PricePerUnit}");
             Console.WriteLine("Seller | Product | CA");
             //changedProducer.ToList().ForEach(name => { Console.WriteLine(name); });
 
@@ -52,7 +56,17 @@ namespace MibMap
             {
                 Console.WriteLine("Seller | Product | CA");
                 changedProducer.ToList().ForEach(name => sw.WriteLine(name));
-            }
+            }*/
+
+            // Dashboard
+            var result = products.Select(p => (
+            Nom: p.Producer.Substring(0, 1)+(p.Producer.Length - 1)+p.Producer.Last(), 
+            NomProduit: p.ProductName, 
+            Stock: (p.Quantity < 10 ? "Stock faible"  : p.Quantity >=10 && p.Quantity <= 15 ? "Stock normal" : "stock élevé"),
+            Prix: p.Quantity < 10 ? (15 * p.PricePerUnit / 100) + p.PricePerUnit : p.Quantity >= 10 && p.Quantity <= 15 ? (5 * p.PricePerUnit / 100) + p.PricePerUnit : p.PricePerUnit,
+            CA: p.PricePerUnit * p.Quantity > 100 ? "Premium" : "Standard"));
+
+            result.ToList().ForEach(res => Console.WriteLine(res));
 
 
         }
