@@ -23,14 +23,37 @@ namespace Rando
 
         private void Rando_Form_Paint(object sender, PaintEventArgs e)
         {
+            trackpoints = DoThat();
+            if (trackpoints.Count < 2)
+                return;
+
+            // Récupérer min/max
+            double minLat = trackpoints.Min(p => p.Latitude);
+            double maxLat = trackpoints.Max(p => p.Latitude);
+            double minLon = trackpoints.Min(p => p.Longitude);
+            double maxLon = trackpoints.Max(p => p.Longitude);
+
+            // Marge pour éviter que ça touche les bords
+            int margin = 20;
+            int width = this.ClientSize.Width - 2 * margin;
+            int height = this.ClientSize.Height - 2 * margin;
+
+            // Conversion GPS -> pixels
+            Point[] points = trackpoints.Select(p =>
+            {
+                int x = margin + (int)((p.Longitude - minLon) / (maxLon - minLon) * width);
+                int y = margin + (int)((maxLat - p.Latitude) / (maxLat - minLat) * height); // inversion Y
+                return new Point(x, y);
+            }).ToArray();
+
             Pen myPen = new Pen(Color.Red);
             myPen.Width = 2;
 
-            Point[] points = new Point[4] { new Point(30, 50), new Point(50, 10), new Point(80, 50), new Point(111, 400) };
+            //Point[] points = new Point[4] { new Point(30, 50), new Point(50, 10), new Point(80, 50), new Point(111, 400) };
             this.CreateGraphics().DrawLines(myPen, points);
         }
 
-        private void DoThat()
+        private List<Trackpoint> DoThat()
         {
             // Fonction qui lit le document gpx, qui trouve les trkpt, les valeurs de lat, lon et ele et les associe aux attributs de la classe Trackpoint
             //XDocument doc = XDocument.Load("gemmikandersteg.gpx");
@@ -66,6 +89,8 @@ namespace Rando
                 }
 
             }
+            return trackpoints;
+
         }
 
 
