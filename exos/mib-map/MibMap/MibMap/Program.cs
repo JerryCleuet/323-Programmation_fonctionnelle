@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.CodeDom.Compiler;
+using System.Diagnostics;
 
 namespace MibMap
 {
@@ -60,22 +61,22 @@ namespace MibMap
 
             // Dashboard
             var result = products.Select(p => (
-                Nom: p.Producer.Substring(0, 1)+(p.Producer.Length - 1)+p.Producer.Last(), 
-                NomProduit: p.ProductName, 
-                Stock: (p.Quantity < 10 ? "Stock faible"  : p.Quantity >=10 && p.Quantity <= 15 ? "Stock normal" : "stock élevé"),
-                Prix: p.Quantity < 10 ? (15 * p.PricePerUnit / 100) + p.PricePerUnit : p.Quantity >= 10 && p.Quantity <= 15 ? (5 * p.PricePerUnit / 100) + p.PricePerUnit : p.PricePerUnit,
-                CA: p.PricePerUnit * p.Quantity > 100 ? "Premium" : "Standard"));
+                 Nom: p.Producer.Substring(0, 1)+(p.Producer.Length - 1)+p.Producer.Last(), 
+                 NomProduit: p.ProductName, 
+                 Stock: (p.Quantity < 10 ? "Stock faible"  : p.Quantity >=10 && p.Quantity <= 15 ? "Stock normal" : "stock élevé"),
+                 Prix: p.Quantity < 10 ? (15 * p.PricePerUnit / 100) + p.PricePerUnit : p.Quantity >= 10 && p.Quantity <= 15 ? (5 * p.PricePerUnit / 100) + p.PricePerUnit : p.PricePerUnit,
+                 CA: p.PricePerUnit * p.Quantity > 100 ? "Premium" : "Standard"));
 
-           // result.ToList().ForEach(res => Console.WriteLine(res));
-            var options = new JsonSerializerOptions { IncludeFields = true };
+            // result.ToList().ForEach(res => Console.WriteLine(res));
+             var options = new JsonSerializerOptions { IncludeFields = true };
 
-            string json = JsonSerializer.Serialize(result, options);
+             string json = JsonSerializer.Serialize(result, options);
 
-            File.WriteAllText("file.json", json);
+             File.WriteAllText("file.json", json); 
 
+            
 
-
-        }
+        } 
 
         class Product
         {
@@ -85,6 +86,26 @@ namespace MibMap
             public int Quantity { get; set; }
             public string Unit { get; set; }
             public double PricePerUnit { get; set; }
+        }
+        static (long time, long memory) MesurePerf(Action action, int iterations = 1000)
+        {
+            // Forcer le garbage collection avant mesure
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            var memoryBefore = GC.GetTotalMemory(false);
+            var stopwatch = Stopwatch.StartNew();
+
+            for (int i = 0; i < iterations; i++)
+            {
+                action();
+            }
+
+            stopwatch.Stop();
+            var memoryAfter = GC.GetTotalMemory(false);
+
+            return (stopwatch.ElapsedMilliseconds, memoryAfter - memoryBefore);
         }
     }
 }
