@@ -60,13 +60,19 @@ namespace MibMap
 
             // Dashboard
             var result = products.Select(p => (
-            Nom: p.Producer.Substring(0, 1)+(p.Producer.Length - 1)+p.Producer.Last(), 
-            NomProduit: p.ProductName, 
-            Stock: (p.Quantity < 10 ? "Stock faible"  : p.Quantity >=10 && p.Quantity <= 15 ? "Stock normal" : "stock élevé"),
-            Prix: p.Quantity < 10 ? (15 * p.PricePerUnit / 100) + p.PricePerUnit : p.Quantity >= 10 && p.Quantity <= 15 ? (5 * p.PricePerUnit / 100) + p.PricePerUnit : p.PricePerUnit,
-            CA: p.PricePerUnit * p.Quantity > 100 ? "Premium" : "Standard"));
+                Nom: p.Producer.Substring(0, 1)+(p.Producer.Length - 1)+p.Producer.Last(), 
+                NomProduit: p.ProductName, 
+                Stock: (p.Quantity < 10 ? "Stock faible"  : p.Quantity >=10 && p.Quantity <= 15 ? "Stock normal" : "stock élevé"),
+                Prix: p.Quantity < 10 ? (15 * p.PricePerUnit / 100) + p.PricePerUnit : p.Quantity >= 10 && p.Quantity <= 15 ? (5 * p.PricePerUnit / 100) + p.PricePerUnit : p.PricePerUnit,
+                CA: p.PricePerUnit * p.Quantity > 100 ? "Premium" : "Standard"));
 
-            result.ToList().ForEach(res => Console.WriteLine(res));
+           // result.ToList().ForEach(res => Console.WriteLine(res));
+            var options = new JsonSerializerOptions { IncludeFields = true };
+
+            string json = JsonSerializer.Serialize(result, options);
+
+            File.WriteAllText("file.json", json);
+
 
 
         }
