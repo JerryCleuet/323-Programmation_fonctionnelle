@@ -31,19 +31,6 @@ namespace MibMap
                 { "Haricots","Beans"}
             };
 
-            List<Product> products = new List<Product>
-            {
-                new Product { Location = 1, Producer = "Bornand", ProductName = "Pommes", Quantity = 20,Unit = "kg", PricePerUnit = 5.50 },
-                new Product { Location = 1, Producer = "Bornand", ProductName = "Poires", Quantity = 16,Unit = "kg", PricePerUnit = 5.50 },
-                new Product { Location = 1, Producer = "Bornand", ProductName = "Pastèques", Quantity = 14,Unit = "pièce", PricePerUnit = 5.50 },
-                new Product { Location = 1, Producer = "Bornand", ProductName = "Melons", Quantity = 5,Unit = "kg", PricePerUnit = 5.50 },
-                new Product { Location = 2, Producer = "Dumont", ProductName = "Noix", Quantity = 20,Unit = "sac", PricePerUnit = 5.50 },
-                new Product { Location = 2, Producer = "Dumont", ProductName = "Raisin", Quantity = 6,Unit = "kg", PricePerUnit = 5.50 },
-                new Product { Location = 2, Producer = "Dumont", ProductName = "Pruneaux", Quantity = 13,Unit = "kg", PricePerUnit = 5.50 },
-                new Product { Location = 2, Producer = "Dumont", ProductName = "Myrtilles", Quantity = 12,Unit = "kg", PricePerUnit = 5.50 },
-
-                //...
-            };
 
             //Ex 1
             /* 
@@ -59,7 +46,8 @@ namespace MibMap
                 changedProducer.ToList().ForEach(name => sw.WriteLine(name));
             }*/
 
-            // Dashboard
+            // Dashboard 
+            /*
             var result = products.Select(p => (
                  Nom: p.Producer.Substring(0, 1)+(p.Producer.Length - 1)+p.Producer.Last(), 
                  NomProduit: p.ProductName, 
@@ -72,9 +60,34 @@ namespace MibMap
 
              string json = JsonSerializer.Serialize(result, options);
 
-             File.WriteAllText("file.json", json); 
+             File.WriteAllText("file.json", json); */
 
-            
+            List<Product> products = new List<Product>
+            {
+                new Product { Location = 1, Producer = "Bornand", ProductName = "Pommes", Quantity = 20,Unit = "kg", PricePerUnit = 5.50 },
+                new Product { Location = 1, Producer = "Bornand", ProductName = "Poires", Quantity = 16,Unit = "kg", PricePerUnit = 5.50 },
+                new Product { Location = 1, Producer = "Bornand", ProductName = "Pastèques", Quantity = 14,Unit = "pièce", PricePerUnit = 5.50 },
+                new Product { Location = 1, Producer = "Bornand", ProductName = "Melons", Quantity = 5,Unit = "kg", PricePerUnit = 5.50 },
+                new Product { Location = 2, Producer = "Dumont", ProductName = "Pommes", Quantity = 20,Unit = "sac", PricePerUnit = 5.50 },
+                new Product { Location = 2, Producer = "Dumont", ProductName = "Raisin", Quantity = 6,Unit = "kg", PricePerUnit = 5.50 },
+                new Product { Location = 2, Producer = "Dumont", ProductName = "Pommes", Quantity = 13,Unit = "kg", PricePerUnit = 5.50 },
+                new Product { Location = 2, Producer = "Dumont", ProductName = "Myrtilles", Quantity = 12,Unit = "kg", PricePerUnit = 5.50 },
+
+                //...
+            };
+
+            // Le retour du marché
+            // 1
+            /*
+            var availableGroseilles = products.Where(p => p.ProductName == "Pommes").Select(p => p.Quantity).Sum();
+            Console.WriteLine(availableGroseilles);*/
+
+            // 2
+            var possibleCA = products
+                .GroupBy(p => p.Producer).Distinct()
+                .Select(group => new { Prix = group.Quantity * group.PricePerUnit });
+            possibleCA.ToList().ForEach(name => Console.WriteLine(name));
+
 
         } 
 
@@ -87,6 +100,8 @@ namespace MibMap
             public string Unit { get; set; }
             public double PricePerUnit { get; set; }
         }
+        // Mesure de perfs
+        /*
         static (long time, long memory) MesurePerf(Action action, int iterations = 1000)
         {
             // Forcer le garbage collection avant mesure
@@ -106,6 +121,7 @@ namespace MibMap
             var memoryAfter = GC.GetTotalMemory(false);
 
             return (stopwatch.ElapsedMilliseconds, memoryAfter - memoryBefore);
-        }
+        }*/
+
     }
 }
